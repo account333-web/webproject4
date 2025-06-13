@@ -389,20 +389,4 @@ router.get('/rank', checkAuth, async (req, res) => {
   }
 });
 
-// GET /api/user/rank
-router.get('/rank', checkAuth, async (req, res) => {
-  try {
-    const row = await dbGet(
-      `SELECT COUNT(*) + 1 AS rank
-         FROM users
-        WHERE balance > (SELECT balance FROM users WHERE id = ?)`,
-      [req.session.userId]
-    );
-    res.json({ rank: row.rank });
-  } catch (err) {
-    console.error('User rank error:', err);
-    res.status(500).json({ error: 'db_error' });
-  }
-});
-
 module.exports = router;
