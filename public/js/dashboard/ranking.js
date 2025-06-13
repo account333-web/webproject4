@@ -3,8 +3,7 @@ import { appendBadge } from './badges.js';
 // Actions dynamiques : entreprises
 export function loadRankings() {
   // 1) Pays
-  console.log('Initializing loadRankings');
-  console.log('Fetching badges...');
+  // Chargement des données de classement
   csrfFetch('/api/rankings/countries')
     .then(r => r.json())
     .then(rows => {
@@ -38,23 +37,19 @@ export function loadRankings() {
     .then(r => r.json())
     .then(badges => {
       // conversion en nombres
-      console.log('Badges response:', badges);
       const topTraderId = Number(badges.trader);
       const topSnakeId  = Number(badges.snake);
       const topPongId   = Number(badges.pong);
-      console.log('Top IDs:', { topTraderId, topSnakeId, topPongId });
 
       // puis on récupère les joueurs
       return csrfFetch('/api/rankings/players')
         .then(r => r.json())
         .then(players => {
-          console.log('Players response:', players);
           const ol = document.getElementById('ranking-players');
           ol.innerHTML = '';
 
           players.forEach(p => {
             const playerId = Number(p.id);
-            console.log('Rendering player:', playerId, p.name);
             const li = document.createElement('li');
             li.className = 'player-item';
             li.style.display     = 'flex';
@@ -81,15 +76,12 @@ export function loadRankings() {
             nameSpan.style.cursor = 'pointer';
 
             if (topTraderId > 0 && playerId === topTraderId) {
-              console.log(`Player ${playerId} is top trader`);
               appendBadge(nameSpan, 'tradeur', 'Tradeur');
             }
             if (topSnakeId  > 0 && playerId === topSnakeId) {
-              console.log(`Player ${playerId} is top Snake`);
               appendBadge(nameSpan, 'apple-eater', 'Apple Eater');
             }
             if (topPongId   > 0 && playerId === topPongId) {
-              console.log(`Player ${playerId} is top Pong`);
               appendBadge(nameSpan, 'ball-enjoyer', 'Ball Enjoyer');
             }            
 

@@ -1,6 +1,5 @@
 // marketUpdater.js
 // Boucle de mise à jour des prix avec random walk symétrique et drift nul
-const update = 1000; // 1 seconde
 const { distributeSalaries } = require('./services/salaryService');
 const { applyTaxes } = require('./services/taxService');
 
@@ -38,7 +37,6 @@ module.exports = function setupMarketLoops(dbGet, dbRun, dbAll, broadcastPrice, 
         ['clickcoin', null, open, high, low, close]);
       broadcastPrice('clickcoin', null, open, high, low, close, ts);
 
-      console.log(`[ClickCoin] ${ts} - open=${open}, close=${close}`);
     } catch (err) {
       console.error('processClickcoin error:', err);
     }
@@ -47,7 +45,6 @@ module.exports = function setupMarketLoops(dbGet, dbRun, dbAll, broadcastPrice, 
   async function processCompanyEventsAndProductivity() {
     try {
       const companies = await dbAll('SELECT id, name, shares_outstanding FROM companies');
-      console.log(`[CompanyTick] ${companies.length} entreprises traitées.`);
 
       for (const c of companies) {
         const row = await dbGet(
@@ -88,7 +85,6 @@ module.exports = function setupMarketLoops(dbGet, dbRun, dbAll, broadcastPrice, 
         await dbRun('UPDATE companies SET capital = ? WHERE id = ?', [newCapital, c.id]);
 
         // Logs détaillés
-        console.log(`↳ [${c.name}] Employés=${employeeCount} | Capital initial=${oldCapital} | Δ aléatoire=${randomDelta} | Bonus=${employeeBonus} → Nouveau capital=${newCapital} | Prix=${close}`);
 
         await dbRun(`INSERT INTO price_history(asset_type,asset_id,open,high,low,close) VALUES(?,?,?,?,?,?)`,
           ['company', c.id, open, high, low, close]);
@@ -100,9 +96,7 @@ module.exports = function setupMarketLoops(dbGet, dbRun, dbAll, broadcastPrice, 
   }
 
   async function processSalariesAndTaxes() {
-    console.log('[💸] Distribution des salaires…');
     await distributeSalaries();
-    console.log('[💰] Application des impôts…');
     await applyTaxes();
   }
 

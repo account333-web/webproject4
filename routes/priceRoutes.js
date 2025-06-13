@@ -9,7 +9,6 @@ const router = express.Router();
 router.get('/clickcoin/history', checkAuth, async (req, res) => {
   try {
     const since = req.query.since;
-    console.log('Clickcoin history request since=', since);
     let rows;
     if (since) {
       rows = await dbAll(

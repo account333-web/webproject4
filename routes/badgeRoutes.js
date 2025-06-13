@@ -5,7 +5,6 @@ const checkAuth = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/', checkAuth, async (req, res) => {
-  console.log('GET /api/badges requested by user', req.session.userId);
   try {
     const badges = await dbGet(`
       SELECT
@@ -34,7 +33,6 @@ router.get('/', checkAuth, async (req, res) => {
            LIMIT 1
         ), 0) AS pong
     `);
-    console.log('Badges from DB:', badges);
     res.json(badges);
   } catch (err) {
     console.error('Erreur get badges:', err);

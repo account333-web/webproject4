@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resp = await csrfFetch('/api/user/black/token', { method: 'GET' });
       const data = await resp.json();
       window.snakeToken = data.token;
-      console.log('Token Snake reçu :', window.snakeToken);
     } catch (err) {
       console.error('Erreur récupération token Snake', err);
       alert('Impossible de démarrer le jeu. Rechargez la page.');
